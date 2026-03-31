@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticos Coffee | Trạm Sạc Sài Gòn 24/7</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { heading: ['Oswald', 'sans-serif'], body: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        ticos: { dark: '#111111', panel: '#1E1E24', primary: '#FF5722', concrete: '#F3F4F6' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        
+        /* Hiệu ứng Nút Neon */
+        .btn-neon { position: relative; overflow: hidden; z-index: 1; transition: all 0.3s; }
+        .btn-neon::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: all 0.5s; z-index: -1;
+        }
+        .btn-neon:hover::before { left: 100%; }
+        .btn-neon:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,87,34,0.3); }
+
+        .marquee { white-space: nowrap; overflow: hidden; display: flex; align-items: center; }
+        .marquee-content { display: inline-block; animation: scrollText 20s linear infinite; }
+        @keyframes scrollText { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        .title-decor { position: relative; display: inline-block; }
+        .title-decor::after {
+            content: ''; position: absolute; left: 0; bottom: -8px; height: 5px; width: 0;
+            background: #FF5722; transition: width 0.8s ease-out;
+        }
+        .is-visible .title-decor::after { width: 100%; }
+
+        /* Hiệu ứng chớp nháy widget nổi */
+        @keyframes pulse-ring { 
+            0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255, 0.4); } 
+            70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(255,255,255, 0); } 
+            100% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255, 0); } 
+        }
+        .animate-pulse-ring { animation: pulse-ring 2.5s infinite; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; }
+        ::-webkit-scrollbar-thumb { background: #FF5722; border-radius: 10px; }
+
+        /* Style cho Footer */
+        .footer-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); background-color: #0a0a0a; }
+        .social-block {
+            display: flex; align-items: center; background: #1a1a1a; padding: 12px 15px; 
+            margin-bottom: 8px; transition: all 0.3s; color: #a3a3a3; font-weight: bold; font-size: 14px; letter-spacing: 1px; border-radius: 4px;
+        }
+        .social-block:hover { background: #FF5722; color: #fff; transform: translateX(5px); }
+        .social-block i, .social-block svg { width: 25px; font-size: 18px; text-align: left; margin-right: 8px; }
+        
+        .map-dark { filter: invert(90%) hue-rotate(180deg) grayscale(20%) contrast(110%); transition: filter 0.5s ease; }
+        .map-dark:hover { filter: invert(0%); }
+    </style>
+</head>
+<body class="antialiased selection:bg-ticos-primary selection:text-white bg-white text-gray-900">
+
+    <div id="orderModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-black/80 backdrop-blur-md transition-opacity opacity-0 duration-300">
+        <div class="bg-white p-8 md:p-10 rounded-2xl w-full max-w-md mx-4 text-center transform scale-95 transition-transform duration-300 shadow-2xl" id="orderModalContent">
+            <h3 class="font-heading text-3xl text-gray-900 mb-2 uppercase">Giao Hàng Tận Nơi</h3>
+            
+            <div id="geoLoading" class="my-6">
+                <i class="fa-solid fa-location-crosshairs fa-spin text-3xl text-ticos-primary mb-3"></i>
+                <p class="text-gray-500 text-sm">Đang tìm chi nhánh gần bạn nhất...</p>
+            </div>
+
+            <div id="manualSelect" class="my-6 hidden">
+                <p class="text-gray-500 text-sm mb-3">Không thể lấy vị trí. Vui lòng chọn chi nhánh:</p>
+                <select id="branchSelector" onchange="updateLinks()" class="w-full bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ticos-primary focus:border-ticos-primary block p-2.5 outline-none font-bold">
+                    <option value="baucat">Ticos Bàu Cát (Tân Bình)</option>
+                    <option value="phanvantri">Ticos Phan Văn Trị (Gò Vấp)</option>
+                </select>
+            </div>
+
+            <div id="geoResult" class="my-6 hidden bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-green-700 text-sm font-bold"><i class="fa-solid fa-check-circle mr-1"></i> Đã chọn chi nhánh gần nhất:</p>
+                <p id="nearestBranchName" class="text-gray-900 font-bold text-lg mt-1">Ticos Bàu Cát</p>
+                <p id="distanceText" class="text-xs text-gray-500 mt-1">Cách bạn: ~ 2.5km</p>
+            </div>
+            
+            <div class="flex flex-col gap-4 mt-6">
+                <a id="shopeeLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#EE4D2D] hover:bg-red-600 text-white py-4 rounded-xl font-bold uppercase transition w-full shadow-lg">
+                    <img src="https://cdn-icons-png.flaticon.com/512/825/825508.png" class="w-6 h-6 filter invert" alt="Shopee"> Đặt qua ShopeeFood
+                </a>
+                <a id="grabLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#00B14F] hover:bg-green-600 text-white py-4 rounded-xl font-bold uppercase transition w-full shadow-lg">
+                    <i class="fa-solid fa-motorcycle text-xl"></i> Đặt qua GrabFood
+                </a>
+            </div>
+            
+            <button onclick="closeOrderModal()" class="mt-8 text-gray-500 hover:text-red-500 font-bold text-sm tracking-widest transition border-b border-transparent hover:border-red-500 pb-1 uppercase">Đóng lại</button>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 items-center">
+        <a href="image_2a9a29.png" data-fancybox="qr" data-caption="Quét mã QR để liên hệ Ticos qua Zalo" title="Zalo" class="w-12 h-12 bg-[#0068FF] rounded-full flex items-center justify-center text-white hover:scale-110 transition shadow-lg animate-pulse-ring cursor-pointer" style="animation-delay: 0s;">
+            <span class="font-bold text-[14px] font-sans">Zalo</span>
+        </a>
+        <a href="https://m.me/ticoscoffee" target="_blank" title="Messenger" class="w-12 h-12 bg-[#0084FF] rounded-full flex items-center justify-center text-white text-xl hover:scale-110 transition shadow-lg animate-pulse-ring" style="animation-delay: 0.2s;">
+            <i class="fa-brands fa-facebook-messenger"></i>
+        </a>
+        <a href="https://www.facebook.com/ticoscoffee/" target="_blank" title="Facebook" class="w-12 h-12 bg-[#1877F2] rounded-full flex items-center justify-center text-white text-xl hover:scale-110 transition shadow-lg animate-pulse-ring" style="animation-delay: 0.4s;">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/ticoszonecoffeetea/" target="_blank" title="Instagram" class="w-12 h-12 bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] rounded-full flex items-center justify-center text-white text-xl hover:scale-110 transition shadow-lg animate-pulse-ring" style="animation-delay: 0.6s;">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="https://www.tiktok.com/@ticoscoffeeofficial" target="_blank" title="TikTok" class="w-12 h-12 bg-black rounded-full flex items-center justify-center text-white text-xl hover:scale-110 transition shadow-lg animate-pulse-ring" style="animation-delay: 0.8s;">
+            <i class="fa-brands fa-tiktok"></i>
+        </a>
+    </div>
+
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="text-4xl font-heading font-black tracking-wider text-gray-900 gs-reveal">
+                TICOS<span class="text-ticos-primary">.</span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-heading text-lg tracking-wide gs-reveal">
+                <a href="#about" class="text-gray-600 hover:text-ticos-primary transition duration-300">Không Gian</a>
+                <a href="#menu" class="text-gray-600 hover:text-ticos-primary transition duration-300">Menu</a>
+                <a href="#programs" class="text-gray-600 hover:text-ticos-primary transition duration-300">Ưu Đãi</a>
+                <a href="#gallery" class="text-gray-600 hover:text-ticos-primary transition duration-300">Gallery</a>
+                <a href="#map" class="text-gray-600 hover:text-ticos-primary transition duration-300">Bản Đồ</a>
+            </div>
+            <button onclick="openOrderModal(event)" class="btn-neon bg-ticos-primary text-white font-heading px-6 py-2 rounded-lg text-lg tracking-wider gs-reveal flex items-center shadow-md">
+                <i class="fa-solid fa-motorcycle mr-2"></i> ĐẶT HÀNG
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative h-screen flex items-center justify-center overflow-hidden bg-[#111]">
+        <div class="absolute inset-0 z-[0]">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop" 
+                 class="w-full h-full object-cover opacity-50 scale-110" id="hero-bg" alt="Hero">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-transparent opacity-90"></div>
+        </div>
+        
+        <div class="text-center px-4 max-w-5xl mt-20 z-10">
+            <div class="overflow-hidden mb-2"><h2 class="font-heading text-ticos-primary text-xl tracking-[0.4em] uppercase hero-text">Cà Phê & Workspace</h2></div>
+            <div class="overflow-hidden"><h1 class="font-heading text-6xl md:text-8xl lg:text-[10rem] leading-none font-black text-white uppercase hero-text drop-shadow-2xl">KHÔNG NGỦ</h1></div>
+            <div class="overflow-hidden mb-8"><h1 class="font-heading text-5xl md:text-7xl lg:text-8xl leading-none font-bold text-transparent uppercase hero-text" style="-webkit-text-stroke: 2px #fff; color: transparent;">CÙNG SÀI GÒN</h1></div>
+            
+            <p class="font-body text-gray-200 text-lg md:text-xl max-w-2xl mx-auto mb-10 hero-text">
+                Không gian Industrial hiện đại, cà phê đậm đặc và hàng ngàn ổ cắm. Trạm sạc hoàn hảo cho mọi deadline ngày đêm của bạn.
+            </p>
+            <button onclick="openOrderModal(event)" class="hero-text btn-neon bg-white text-gray-900 px-8 py-4 rounded-lg font-bold text-lg uppercase tracking-wider shadow-xl hover:bg-gray-100">
+                Giao Hàng Ngay Tận Nơi <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <div class="bg-ticos-primary py-4 marquee border-y border-orange-700 transform -rotate-1 scale-105 shadow-2xl z-10 relative">
+        <div class="marquee-content font-heading text-3xl md:text-4xl text-white font-black tracking-widest uppercase">
+            MỞ CỬA 24/7 ✦ WIFI CĂNG ĐÉT ✦ HÀNG NGÀN Ổ CẮM ✦ KHÔNG GIAN CÔNG NGHIỆP ✦ GIAO HÀNG TẬN NƠI ✦ MỞ CỬA 24/7 ✦ 
+        </div>
+    </div>
+
+    <section id="about" class="py-32 px-6 bg-white relative">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(#d1d5db_2px,transparent_2px)] [background-size:16px_16px] opacity-50"></div>
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
+            <div class="gs-fade-up">
+                <h2 class="font-heading text-5xl md:text-6xl text-gray-900 mb-8 uppercase"><span class="title-decor">TRẠM SẠC</span> <br>CỦA DÂN CÀY</h2>
+                <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                    Khác với những quán cà phê tối tăm mờ ảo, không gian Ticos cực kỳ sáng sủa. Thiết kế bê tông kết hợp gỗ ấm đón ánh sáng tự nhiên. Ánh sáng chuẩn tại đây giúp mắt không bị mỏi khi nhìn màn hình liên tục.
+                </p>
+                <div class="grid grid-cols-2 gap-8 border-t border-gray-200 pt-8">
+                    <div>
+                        <div class="font-heading text-5xl text-ticos-primary font-black mb-2">24/7</div>
+                        <div class="text-gray-500 uppercase tracking-widest text-sm font-bold">Hoạt động xuyên đêm</div>
+                    </div>
+                    <div>
+                        <div class="font-heading text-5xl text-ticos-primary font-black mb-2">100%</div>
+                        <div class="text-gray-500 uppercase tracking-widest text-sm font-bold">Phủ sóng ổ cắm</div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative gs-fade-left">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop" class="rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 w-full" alt="About Ticos">
+                <div class="absolute -bottom-6 -right-6 w-full h-full border-4 border-ticos-primary rounded-2xl z-0 hidden md:block"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="py-32 bg-ticos-concrete border-y border-gray-200">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 gs-fade-up">
+                <h2 class="font-heading text-5xl md:text-6xl text-gray-900 uppercase"><span class="title-decor">MENU</span> CÚ ĐÊM</h2>
+                <p class="text-gray-600 mt-4 text-lg">Đậm đà. Tỉnh táo. Thao tác đặt hàng ngay bên dưới.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="group bg-white rounded-3xl p-6 border border-gray-100 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-xl hover:shadow-2xl">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-64 relative">
+                        <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Menu 1">
+                        <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-bold px-3 py-1 rounded-full shadow-md">BEST SELLER</div>
+                    </div>
+                    <h3 class="font-heading text-2xl text-gray-900 mb-2 uppercase">Cold Brew Thượng Hạng</h3>
+                    <p class="text-gray-500 mb-6 min-h-[48px]">Ủ lạnh 24h, vị đậm đà, lượng caffeine cao ngất ngưởng.</p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-5">
+                        <span class="text-3xl font-heading font-black text-ticos-primary">55K</span>
+                        <button onclick="openOrderModal(event)" class="btn-neon bg-gray-900 text-white px-5 py-2.5 rounded-lg font-bold uppercase text-sm flex items-center gap-2 hover:bg-ticos-primary transition">
+                            <i class="fa-solid fa-cart-shopping"></i> MUA NGAY
+                        </button>
+                    </div>
+                </div>
+
+                <div class="group bg-white rounded-3xl p-6 border border-gray-100 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-xl hover:shadow-2xl" style="transition-delay: 100ms;">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-64 relative">
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Menu 2">
+                    </div>
+                    <h3 class="font-heading text-2xl text-gray-900 mb-2 uppercase">Trà Vải Nhiệt Đới Size L</h3>
+                    <p class="text-gray-500 mb-6 min-h-[48px]">Thanh mát, giải nhiệt, xua tan căng thẳng lập tức.</p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-5">
+                        <span class="text-3xl font-heading font-black text-ticos-primary">65K</span>
+                        <button onclick="openOrderModal(event)" class="btn-neon bg-gray-900 text-white px-5 py-2.5 rounded-lg font-bold uppercase text-sm flex items-center gap-2 hover:bg-ticos-primary transition">
+                            <i class="fa-solid fa-cart-shopping"></i> MUA NGAY
+                        </button>
+                    </div>
+                </div>
+
+                <div class="group bg-white rounded-3xl p-6 border border-gray-100 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-xl hover:shadow-2xl" style="transition-delay: 200ms;">
+                    <div class="overflow-hidden rounded-2xl mb-6 h-64 relative">
+                        <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Menu 3">
+                        <div class="absolute top-4 right-4 bg-gray-900 text-white font-heading font-bold px-3 py-1 rounded-full shadow-md">NEW COMBO</div>
+                    </div>
+                    <h3 class="font-heading text-2xl text-gray-900 mb-2 uppercase">Combo Khởi Động</h3>
+                    <p class="text-gray-500 mb-6 min-h-[48px]">Bao gồm 1 Bạc Xỉu size M và 1 Bánh Croissant bơ tỏi.</p>
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-5">
+                        <span class="text-3xl font-heading font-black text-ticos-primary">79K</span>
+                        <button onclick="openOrderModal(event)" class="btn-neon bg-gray-900 text-white px-5 py-2.5 rounded-lg font-bold uppercase text-sm flex items-center gap-2 hover:bg-ticos-primary transition">
+                            <i class="fa-solid fa-cart-shopping"></i> MUA NGAY
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="programs" class="py-32 bg-[#111] relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(#FF5722_2px,transparent_2px)] [background-size:40px_40px] opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-20 gs-fade-up">
+                <h2 class="font-heading text-5xl md:text-6xl text-white uppercase"><span class="title-decor">ƯU ĐÃI</span> ĐẶC QUYỀN</h2>
+                <p class="text-gray-400 mt-4 text-lg">Tiếp thêm năng lượng cho những đêm dài không ngủ.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-[#1a1a1a] rounded-3xl p-8 border border-gray-800 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-2xl group">
+                    <div class="text-ticos-primary text-5xl mb-6 transform group-hover:scale-110 transition duration-500"><i class="fa-solid fa-moon"></i></div>
+                    <h3 class="font-heading text-2xl text-white mb-3 uppercase">Combo Chạy Deadline</h3>
+                    <p class="text-gray-400 mb-8 min-h-[72px]">Giảm ngay 20% cho hóa đơn mua Cà phê kèm bánh ngọt từ 22:00 đến 05:00 sáng.</p>
+                    <button onclick="openOrderModal(event)" class="inline-block text-ticos-primary font-bold uppercase tracking-widest text-sm hover:text-white transition">Đặt Ngay <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                </div>
+
+                <div class="bg-[#1a1a1a] rounded-3xl p-8 border border-gray-800 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-2xl group" style="transition-delay: 100ms;">
+                    <div class="text-ticos-primary text-5xl mb-6 transform group-hover:scale-110 transition duration-500"><i class="fa-solid fa-mug-hot"></i></div>
+                    <h3 class="font-heading text-2xl text-white mb-3 uppercase">Refill Đồng Giá 19K</h3>
+                    <p class="text-gray-400 mb-8 min-h-[72px]">Refill lần 2 các dòng Cà phê truyền thống chỉ với 19.000đ. Đảm bảo tỉnh táo đến sáng.</p>
+                    <a href="#map" class="inline-block text-ticos-primary font-bold uppercase tracking-widest text-sm hover:text-white transition">Đến quán <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                </div>
+
+                <div class="bg-[#1a1a1a] rounded-3xl p-8 border border-gray-800 hover:border-ticos-primary transition-all duration-500 gs-fade-up shadow-2xl group" style="transition-delay: 200ms;">
+                    <div class="text-ticos-primary text-5xl mb-6 transform group-hover:scale-110 transition duration-500"><i class="fa-solid fa-id-card"></i></div>
+                    <h3 class="font-heading text-2xl text-white mb-3 uppercase">Thành Viên Ticos</h3>
+                    <p class="text-gray-400 mb-8 min-h-[72px]">Tích điểm mỗi lần mua hàng. Đổi ly/cốc giữ nhiệt độc quyền cực ngầu thương hiệu Ticos.</p>
+                    <a href="image_2a9a29.png" data-fancybox="qr" class="inline-block text-ticos-primary font-bold uppercase tracking-widest text-sm hover:text-white transition">Đăng ký qua Zalo <i class="fa-solid fa-qrcode ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gs-fade-up">
+                <div>
+                    <h2 class="font-heading text-5xl md:text-6xl text-gray-900 uppercase"><span class="title-decor">GÓC CHILL</span> & LÀM VIỆC</h2>
+                    <p class="text-gray-500 mt-4 text-lg">Trải nghiệm UI mở ảnh full màn hình khi bấm vào hình.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1500" data-fancybox="gallery" class="overflow-hidden rounded-xl block group gs-fade-up shadow-md">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600" class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500">
+                </a>
+                <a href="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=1500" data-fancybox="gallery" class="overflow-hidden rounded-xl block group gs-fade-up shadow-md" style="transition-delay: 100ms;">
+                    <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=600" class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500">
+                </a>
+                <a href="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=1500" data-fancybox="gallery" class="overflow-hidden rounded-xl block group gs-fade-up shadow-md" style="transition-delay: 200ms;">
+                    <img src="https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=600" class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500">
+                </a>
+                <a href="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?q=80&w=1500" data-fancybox="gallery" class="overflow-hidden rounded-xl block group gs-fade-up shadow-md" style="transition-delay: 300ms;">
+                    <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?q=80&w=600" class="w-full h-72 object-cover transform group-hover:scale-110 transition duration-500">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="feedback" class="py-32 bg-ticos-primary relative overflow-hidden">
+        <div class="absolute top-10 left-0 text-[12rem] md:text-[15rem] font-heading font-black text-black/5 whitespace-nowrap z-0 select-none">TESTIMONIALS</div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <h2 class="font-heading text-5xl md:text-6xl text-white uppercase text-center mb-16 gs-fade-up"><span class="title-decor">ĐÁNH GIÁ</span> THỰC TẾ</h2>
+            
+            <div class="swiper feedbackSwiper gs-fade-up">
+                <div class="swiper-wrapper mb-16">
+                    <div class="swiper-slide">
+                        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl h-full border-b-8 border-gray-900">
+                            <div class="flex text-gray-900 mb-6"><i class="fa-solid fa-quote-left text-3xl"></i></div>
+                            <p class="text-gray-700 text-lg mb-8 italic leading-relaxed">"Đội ngũ tụi mình hay ra đây họp nhóm làm project. Ngồi thiết kế UI hay cày code thâu đêm mà mạng vẫn ổn định, chỗ cắm sạc dư dả. Ánh sáng tốt, không bị đau mắt xíu nào."</p>
+                            <div class="flex items-center pt-6">
+                                <div class="w-14 h-14 rounded-full mr-4 overflow-hidden border-2 border-ticos-primary"><img src="https://i.pravatar.cc/150?img=11" alt="Avatar"></div>
+                                <div>
+                                    <h4 class="text-gray-900 font-bold font-heading text-xl">Đình Phúc</h4>
+                                    <p class="text-ticos-primary font-bold text-sm">Sinh viên IT</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl h-full border-b-8 border-gray-900">
+                            <div class="flex text-gray-900 mb-6"><i class="fa-solid fa-quote-left text-3xl"></i></div>
+                            <p class="text-gray-700 text-lg mb-8 italic leading-relaxed">"Cuối tuần mấy anh em trong team hay ra đây cắm trại ban đêm để train giải đấu. Bàn dài ngồi chung team cực đã, quất ly Cold Brew là đủ sức tỉnh táo combat tới sáng."</p>
+                            <div class="flex items-center pt-6">
+                                <div class="w-14 h-14 rounded-full mr-4 overflow-hidden border-2 border-ticos-primary"><img src="https://i.pravatar.cc/150?img=12" alt="Avatar"></div>
+                                <div>
+                                    <h4 class="text-gray-900 font-bold font-heading text-xl">Team CaoSu</h4>
+                                    <p class="text-ticos-primary font-bold text-sm">Gamer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl h-full border-b-8 border-gray-900">
+                            <div class="flex text-gray-900 mb-6"><i class="fa-solid fa-quote-left text-3xl"></i></div>
+                            <p class="text-gray-700 text-lg mb-8 italic leading-relaxed">"Thật sự recommend mọi người ghé Ticos. Cứ vài bước là có ổ cắm, tone màu sáng sủa kết hợp gỗ rất hiện đại. Nhân viên ca đêm rất thân thiện. Trạm sạc số 1 Sài Gòn!"</p>
+                            <div class="flex items-center pt-6">
+                                <div class="w-14 h-14 rounded-full mr-4 overflow-hidden border-2 border-ticos-primary"><img src="https://i.pravatar.cc/150?img=5" alt="Avatar"></div>
+                                <div>
+                                    <h4 class="text-gray-900 font-bold font-heading text-xl">Trần Thảo Nguyễn</h4>
+                                    <p class="text-ticos-primary font-bold text-sm">Freelancer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="map" class="py-32 bg-ticos-concrete border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 gs-fade-up">
+            <h2 class="font-heading text-5xl md:text-6xl text-gray-900 uppercase mb-12"><span class="title-decor">TÌM CHI NHÁNH</span> GẦN NHẤT</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl">
+                    <h3 class="font-heading text-2xl text-gray-900 mb-6 uppercase">Hệ Thống Ticos Coffee</h3>
+                    <ul class="space-y-4">
+                        <li class="branch-item border-2 border-ticos-primary bg-ticos-primary/10 rounded-xl p-4 cursor-pointer transition-all duration-300" 
+                            onclick="changeMap('baucat', this)">
+                            <h4 class="text-gray-900 font-bold text-lg"><i class="fa-solid fa-location-dot mr-2 text-ticos-primary"></i> Ticos Bàu Cát</h4>
+                            <p class="text-gray-500 text-sm mt-1 ml-6">145 Bàu Cát, Phường 14, Tân Bình</p>
+                        </li>
+                        <li class="branch-item border-2 border-transparent hover:border-gray-300 rounded-xl p-4 cursor-pointer transition-all duration-300" 
+                            onclick="changeMap('phanvantri', this)">
+                            <h4 class="text-gray-900 font-bold text-lg"><i class="fa-solid fa-location-dot mr-2 text-ticos-primary"></i> Ticos Phan Văn Trị</h4>
+                            <p class="text-gray-500 text-sm mt-1 ml-6">527 Phan Văn Trị, Phường 5, Gò Vấp</p>
+                        </li>
+                    </ul>
+                    <div class="mt-8 border-t border-gray-100 pt-6">
+                        <p class="text-gray-900 font-heading text-xl"><i class="fa-solid fa-phone-volume text-ticos-primary mr-2"></i> Hotline: <span class="text-ticos-primary">1900 1234</span></p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 rounded-3xl overflow-hidden shadow-2xl h-[400px] bg-gray-200">
+                    <iframe id="map-iframe" class="w-full h-full border-0 map-dark" 
+                        src="https://maps.google.com/maps?q=Ticos%20Coffee%20145%20B%C3%A0u%20C%C3%A1t&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-bg pt-16 border-t border-gray-800 pb-10 font-body">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            
+            <div>
+                <h4 class="text-white font-heading text-lg mb-6 uppercase tracking-widest border-l-4 border-ticos-primary pl-3">THÔNG TIN LIÊN HỆ</h4>
+                <ul class="space-y-4 text-gray-400 text-sm">
+                    <li><strong class="text-white">Địa chỉ:</strong> 145 Bàu Cát, P.14, Tân Bình <br> & 527 Phan Văn Trị, P.5, Gò Vấp</li>
+                    <li><strong class="text-white">Hotline:</strong> 1900 1234</li>
+                    <li><strong class="text-white">Email:</strong> contact@ticoscoffee.com</li>
+                    <li><strong class="text-white">Website:</strong> ticoscoffee.com</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-heading text-lg mb-6 uppercase tracking-widest border-l-4 border-ticos-primary pl-3">GIỜ MỞ CỬA</h4>
+                <ul class="space-y-4 text-gray-400 text-sm">
+                    <li><strong class="text-white block mb-1">Chi nhánh Bàu Cát:</strong> 07:00 AM - 02:00 AM</li>
+                    <li><strong class="text-white block mb-1">Chi nhánh Phan Văn Trị:</strong> 24/7 (Cả ngày đêm)</li>
+                    <li class="italic mt-4">(Mở cửa xuyên suốt tất cả các ngày trong tuần)</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="text-white font-heading text-lg mb-6 uppercase tracking-widest border-l-4 border-ticos-primary pl-3">CHÍNH SÁCH HỖ TRỢ</h4>
+                <ul class="space-y-3 text-gray-400 text-sm">
+                    <li><a href="#" class="hover:text-ticos-primary transition">Chính sách tuyển dụng</a></li>
+                    <li><a href="#" class="hover:text-ticos-primary transition">Chính sách giao hàng</a></li>
+                    <li><a href="#" class="hover:text-ticos-primary transition">Chính sách thanh toán</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-heading text-lg mb-6 uppercase tracking-widest border-l-4 border-ticos-primary pl-3">THEO DÕI</h4>
+                <div class="flex flex-col">
+                    <a href="https://www.facebook.com/ticoscoffee/" target="_blank" class="social-block"><i class="fa-brands fa-facebook-f"></i> FACEBOOK</a>
+                    
+                    <a href="image_2a9a29.png" data-fancybox="qr" data-caption="Quét mã QR để liên hệ Ticos qua Zalo" class="social-block cursor-pointer">
+                        <svg class="fill-current w-5 h-5 mr-3" viewBox="0 0 24 24"><path d="M21.353 15.65c.032-.178.048-.363.048-.553 0-3.613-3.483-6.543-7.777-6.543S5.847 11.484 5.847 15.097c0 3.614 3.483 6.543 7.777 6.543 1.258 0 2.443-.25 3.486-.694 1.34.82 3.148 1.484 4.567 1.543.15.006.262-.122.215-.262-.275-.804-.844-2.28-1.04-3.085.318-.475.502-.992.502-1.492zm-8.232-2.185h-1.57c-.198 0-.36-.16-.36-.36s.162-.36.36-.36h1.57c.198 0 .36.162.36.36s-.162.36-.36.36zm2.388 0h-1.57c-.198 0-.36-.16-.36-.36s.162-.36.36-.36h1.57c.198 0 .36.162.36.36s-.162.36-.36.36zm-4.777 0h-1.57c-.198 0-.36-.16-.36-.36s.162-.36.36-.36h1.57c.198 0 .36.162.36.36s-.162.36-.36.36z"/></svg>
+                        ZALO (Nhấn quét QR)
+                    </a>
+                    
+                    <a href="https://www.tiktok.com/@ticoscoffeeofficial" target="_blank" class="social-block"><i class="fa-brands fa-tiktok"></i> TIKTOK</a>
+                    <a href="https://www.instagram.com/ticoszonecoffeetea/" target="_blank" class="social-block"><i class="fa-brands fa-instagram"></i> INSTAGRAM</a>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 border-t border-gray-800 pt-6 text-center text-gray-500 text-sm">
+            © 2026 Ticos Coffee. Nơi những dòng code tuyệt vời ra đời lúc rạng sáng.
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <script>
+        // DATA CHI NHÁNH & LINKS (Cập nhật đúng link Grab bạn gửi và Link Iframe Embed Map thật)
+        const branches = {
+            baucat: {
+                name: "Ticos Bàu Cát",
+                lat: 10.793883, lon: 106.640822,
+                shopee: "https://shopeefood.vn/ho-chi-minh/ticos-coffee-bau-cat",
+                grab: "https://food.grab.com/vn/vi/restaurant/ticos-coffee-b%C3%A0u-c%C3%A1t-delivery/5-C7M3E3EDNKDTRX?",
+                mapSrc: "https://maps.google.com/maps?q=Ticos%20Coffee%20145%20B%C3%A0u%20C%C3%A1t&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            },
+            phanvantri: {
+                name: "Ticos Phan Văn Trị",
+                lat: 10.825619, lon: 106.687595,
+                shopee: "https://shopeefood.vn/ho-chi-minh/ticos-coffee-phan-van-tri",
+                grab: "https://food.grab.com/vn/vi/restaurant/ticos-coffee-phan-v%C4%83n-tr%E1%BB%8B-delivery/5-C7M3E3EDNFBFRE?",
+                mapSrc: "https://maps.google.com/maps?q=Ticos%20Coffee%20527%20Phan%20V%C4%83n%20Tr%E1%BB%8B&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            }
+        };
+
+        // ĐỔI BẢN ĐỒ
+        function changeMap(branchKey, element) {
+            const iframe = document.getElementById('map-iframe');
+            document.querySelectorAll('.branch-item').forEach(item => {
+                item.classList.remove('border-ticos-primary', 'bg-ticos-primary/10');
+                item.classList.add('border-transparent');
+            });
+            element.classList.remove('border-transparent');
+            element.classList.add('border-ticos-primary', 'bg-ticos-primary/10');
+            iframe.src = branches[branchKey].mapSrc;
+        }
+
+        // TÍNH KHOẢNG CÁCH
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // XỬ LÝ MODAL ĐẶT HÀNG
+        const orderModal = document.getElementById('orderModal');
+        const orderModalContent = document.getElementById('orderModalContent');
+        const shopeeLink = document.getElementById('shopeeLink');
+        const grabLink = document.getElementById('grabLink');
+        
+        function updateLinksDOM(branchKey) {
+            shopeeLink.href = branches[branchKey].shopee;
+            grabLink.href = branches[branchKey].grab;
+        }
+
+        function updateLinks() {
+            const selected = document.getElementById('branchSelector').value;
+            updateLinksDOM(selected);
+        }
+        
+        function openOrderModal(e) {
+            if(e) e.preventDefault();
+            orderModal.classList.remove('hidden');
+            void orderModal.offsetWidth;
+            orderModal.classList.remove('opacity-0');
+            orderModalContent.classList.remove('scale-95');
+            orderModalContent.classList.add('scale-100');
+
+            document.getElementById('geoLoading').classList.remove('hidden');
+            document.getElementById('geoResult').classList.add('hidden');
+            document.getElementById('manualSelect').classList.add('hidden');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        const distBauCat = calculateDistance(userLat, userLon, branches.baucat.lat, branches.baucat.lon);
+                        const distPhanVanTri = calculateDistance(userLat, userLon, branches.phanvantri.lat, branches.phanvantri.lon);
+                        
+                        let nearestKey = distBauCat <= distPhanVanTri ? 'baucat' : 'phanvantri';
+                        let nearestDist = Math.min(distBauCat, distPhanVanTri).toFixed(1);
+
+                        document.getElementById('geoLoading').classList.add('hidden');
+                        document.getElementById('geoResult').classList.remove('hidden');
+                        document.getElementById('nearestBranchName').innerText = branches[nearestKey].name;
+                        document.getElementById('distanceText').innerText = `Cách bạn: ~ ${nearestDist} km`;
+                        
+                        updateLinksDOM(nearestKey);
+                    },
+                    (error) => {
+                        document.getElementById('geoLoading').classList.add('hidden');
+                        document.getElementById('manualSelect').classList.remove('hidden');
+                        updateLinksDOM('baucat'); 
+                    },
+                    { timeout: 5000 } 
+                );
+            } else {
+                document.getElementById('geoLoading').classList.add('hidden');
+                document.getElementById('manualSelect').classList.remove('hidden');
+                updateLinksDOM('baucat');
+            }
+        }
+        
+        function closeOrderModal() {
+            orderModal.classList.add('opacity-0');
+            orderModalContent.classList.remove('scale-100');
+            orderModalContent.classList.add('scale-95');
+            setTimeout(() => { orderModal.classList.add('hidden'); }, 300);
+        }
+
+        orderModal.addEventListener('click', function(e) {
+            if (e.target === orderModal) closeOrderModal();
+        });
+
+        // FANCYBOX
+        Fancybox.bind('[data-fancybox="gallery"]', { loop: true, animated: true, showClass: "fancybox-fadeIn", hideClass: "fancybox-fadeOut" });
+        Fancybox.bind('[data-fancybox="qr"]', { autoFocus: false });
+
+        // SWIPER
+        const swiper = new Swiper('.feedbackSwiper', {
+            slidesPerView: 1, spaceBetween: 30, loop: true,
+            autoplay: { delay: 4000, disableOnInteraction: false },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
+        });
+
+        // GSAP
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(".hero-text", { y: 100, opacity: 0, duration: 1.2, stagger: 0.15, ease: "power4.out", delay: 0.2 });
+        gsap.to("#hero-bg", { y: "20%", ease: "none", scrollTrigger: { trigger: "section", start: "top top", end: "bottom top", scrub: true }});
+        gsap.utils.toArray('.gs-fade-up').forEach(elem => { gsap.from(elem, { y: 50, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: elem, start: "top 85%" } }); });
+        gsap.utils.toArray('.gs-fade-left').forEach(elem => { gsap.from(elem, { x: 100, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: elem, start: "top 80%" } }); });
+        gsap.utils.toArray('h2').forEach(title => { ScrollTrigger.create({ trigger: title, start: "top 85%", toggleClass: "is-visible" }); });
+    </script>
+</body>
+</html>
