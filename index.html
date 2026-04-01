@@ -21,9 +21,8 @@
                     colors: { 
                         ticos: { 
                             dark: '#111111', 
-                            primary: '#B21F36', /* Đỏ đô rực rỡ, sang trọng hơn */
-                            light: '#F9FAFB',
-                            gray: '#f3f4f6'
+                            primary: '#B21F36', 
+                            light: '#F9FAFB'
                         } 
                     }
                 }
@@ -34,9 +33,9 @@
     <style>
         body { font-family: 'Outfit', sans-serif; overflow-x: hidden; background-color: #ffffff; color: #111111; }
         
-        /* Hiệu ứng Nút Siêu Cấp */
+        /* Hiệu ứng Nút Header & Hero */
         .btn-red { 
-            position: relative; overflow: hidden; z-index: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; overflow: hidden; z-index: 1; transition: all 0.4s; 
             background: linear-gradient(135deg, #B21F36 0%, #8A1538 100%);
             box-shadow: 0 10px 25px rgba(178, 31, 54, 0.3);
         }
@@ -46,35 +45,33 @@
             transition: all 0.6s; z-index: -1;
         }
         .btn-red:hover::before { left: 100%; }
-        .btn-red:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(178, 31, 54, 0.5); }
+        .btn-red:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px rgba(178, 31, 54, 0.5); }
 
-        /* Tiêu đề Highlight */
-        .title-decor { position: relative; display: inline-block; z-index: 1; }
+        /* FIX LỖI: Tiêu đề Highlight đổi màu chữ trắng khi được highlight đỏ */
+        .title-decor { position: relative; display: inline-block; z-index: 1; transition: color 0.4s ease; padding: 0 8px; }
         .title-decor::after {
-            content: ''; position: absolute; left: -5%; bottom: 5px; height: 15px; width: 110%;
-            background: rgba(178, 31, 54, 0.2); z-index: -1; transform: skewX(-15deg); transition: all 0.5s;
+            content: ''; position: absolute; left: 0; bottom: 5px; height: 30%; width: 100%;
+            background: rgba(178, 31, 54, 0.15); z-index: -1; transform: skewX(-15deg); transition: all 0.5s ease;
         }
-        .is-visible .title-decor::after { background: #B21F36; color: white; height: 100%; bottom: 0; border-radius: 8px; }
+        .is-visible .title-decor { color: #ffffff !important; }
+        .is-visible .title-decor::after { background: #B21F36; height: 100%; bottom: 0; border-radius: 8px; transform: skewX(0deg); }
 
         /* Banner Chạy */
         .marquee { white-space: nowrap; overflow: hidden; display: flex; align-items: center; }
         .marquee-content { display: inline-block; animation: scrollText 20s linear infinite; }
         @keyframes scrollText { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        /* Menu Tabs & Card Hover Sinh Động */
+        /* Menu Tabs & Card */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .active-tab { background: #B21F36 !important; color: white !important; border-color: #B21F36 !important; transform: scale(1.1); box-shadow: 0 10px 20px rgba(178, 31, 54, 0.3); }
+        .active-tab { background: #B21F36 !important; color: white !important; border-color: #B21F36 !important; transform: scale(1.05); box-shadow: 0 10px 20px rgba(178, 31, 54, 0.3); }
         
         .menu-card { transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); border: 2px solid transparent; }
-        .menu-card:hover { transform: translateY(-15px); border-color: rgba(178,31,54,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-        .menu-img { transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .menu-card:hover .menu-img { transform: scale(1.15) rotate(3deg); }
+        .menu-card:hover { transform: translateY(-10px); border-color: rgba(178,31,54,0.15); box-shadow: 0 25px 40px -10px rgba(0,0,0,0.1); }
+        .menu-img { transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .menu-card:hover .menu-img { transform: scale(1.1) rotate(2deg); }
 
-        /* Floating Effect */
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        .floating { animation: float 4s ease-in-out infinite; }
-
-        ::-webkit-scrollbar { width: 10px; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f3f4f6; }
         ::-webkit-scrollbar-thumb { background: #B21F36; border-radius: 10px; }
     </style>
@@ -82,567 +79,581 @@
 <body class="antialiased selection:bg-ticos-primary selection:text-white">
 
     <div id="orderModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-black/70 backdrop-blur-lg transition-all duration-300">
-        <div class="bg-white p-10 md:p-12 rounded-[2rem] w-full max-w-lg mx-4 text-center transform scale-95 transition-all duration-300 shadow-[0_0_50px_rgba(0,0,0,0.5)]" id="orderModalContent">
+        <div class="bg-white p-8 md:p-12 rounded-[2rem] w-full max-w-lg mx-4 text-center transform scale-95 transition-all duration-300 shadow-2xl" id="orderModalContent">
             <h3 class="font-heading text-4xl font-black text-gray-900 mb-2 uppercase tracking-wide">GIAO HÀNG TẬN NƠI</h3>
-            <p class="text-gray-500 font-body text-lg mb-6">Chọn ứng dụng để Ticos ship năng lượng tới bạn!</p>
+            <p class="text-gray-500 font-body text-base mb-6">Chọn ứng dụng để Ticos ship tới bạn!</p>
             
-            <div id="geoLoading" class="my-6 py-4">
-                <i class="fa-solid fa-location-crosshairs fa-spin text-5xl text-ticos-primary mb-4"></i>
-                <p class="text-gray-600 text-sm font-bold uppercase tracking-widest">Đang quét chi nhánh gần nhất...</p>
+            <div id="geoLoading" class="my-4 py-2">
+                <i class="fa-solid fa-location-crosshairs fa-spin text-4xl text-ticos-primary mb-4"></i>
+                <p class="text-gray-600 text-sm font-bold uppercase tracking-widest">Đang quét vị trí...</p>
             </div>
 
-            <div id="geoResult" class="my-6 hidden bg-red-50 border-2 border-ticos-primary/20 rounded-2xl p-6">
+            <div id="manualSelect" class="my-4 hidden bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                <p class="text-gray-600 text-sm font-bold mb-3 uppercase tracking-widest">Chọn chi nhánh của bạn:</p>
+                <select id="branchSelector" onchange="updateLinks()" class="w-full bg-white border-2 border-gray-300 text-gray-900 text-base rounded-xl p-3 outline-none font-bold focus:border-ticos-primary transition">
+                    <option value="baucat">Ticos Bàu Cát (Tân Bình)</option>
+                    <option value="pvt">Ticos Phan Văn Trị (Gò Vấp)</option>
+                </select>
+            </div>
+
+            <div id="geoResult" class="my-4 hidden bg-red-50 border-2 border-ticos-primary/20 rounded-2xl p-5">
                 <p class="text-ticos-primary text-xs font-bold uppercase tracking-widest mb-2"><i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Gần bạn nhất là:</p>
-                <p id="nearestBranchName" class="text-gray-900 font-black text-2xl mb-1"></p>
+                <p id="nearestBranchName" class="text-gray-900 font-black text-2xl mb-1">Ticos Bàu Cát</p>
                 <p id="distanceText" class="text-sm text-gray-500 font-medium"></p>
             </div>
             
-            <div class="flex flex-col gap-4 mt-8">
-                <a id="shopeeLink" href="#" target="_blank" class="flex items-center justify-center gap-4 bg-[#EE4D2D] text-white py-5 rounded-2xl font-black text-lg uppercase shadow-[0_10px_20px_rgba(238,77,45,0.3)] hover:scale-105 hover:shadow-[0_15px_30px_rgba(238,77,45,0.4)] transition-all">
-                    <img src="https://cdn-icons-png.flaticon.com/512/825/825508.png" class="w-8 h-8 filter invert" alt="Shopee"> Đặt qua ShopeeFood
+            <div class="flex flex-col gap-4 mt-6">
+                <a id="shopeeLink" href="#" target="_blank" class="flex items-center justify-center gap-4 bg-[#EE4D2D] text-white py-4 rounded-xl font-black text-lg uppercase hover:scale-105 transition-all shadow-lg">
+                    <img src="https://cdn-icons-png.flaticon.com/512/825/825508.png" class="w-7 h-7 filter invert" alt="Shopee"> Đặt qua ShopeeFood
                 </a>
-                <a id="grabLink" href="#" target="_blank" class="flex items-center justify-center gap-4 bg-[#00B14F] text-white py-5 rounded-2xl font-black text-lg uppercase shadow-[0_10px_20px_rgba(0,177,79,0.3)] hover:scale-105 hover:shadow-[0_15px_30px_rgba(0,177,79,0.4)] transition-all">
-                    <i class="fa-solid fa-motorcycle text-3xl"></i> Đặt qua GrabFood
+                <a id="grabLink" href="#" target="_blank" class="flex items-center justify-center gap-4 bg-[#00B14F] text-white py-4 rounded-xl font-black text-lg uppercase hover:scale-105 transition-all shadow-lg">
+                    <i class="fa-solid fa-motorcycle text-2xl"></i> Đặt qua GrabFood
                 </a>
             </div>
-            <button onclick="closeOrderModal()" class="mt-8 text-gray-400 hover:text-red-600 font-bold text-sm tracking-widest uppercase transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Đóng lại</button>
+            <button onclick="closeOrderModal()" class="mt-6 text-gray-400 hover:text-red-600 font-bold text-sm tracking-widest uppercase transition-colors border-b-2 border-transparent hover:border-red-600 pb-1">Đóng lại</button>
         </div>
     </div>
 
-    <div class="fixed bottom-8 right-8 z-[100] flex flex-col gap-4 items-center">
-        <a href="decor/mã zalo.jpg" data-fancybox="qr" class="w-14 h-14 bg-[#0068FF] rounded-full flex items-center justify-center text-white hover:scale-110 hover:-translate-y-2 transition-all shadow-xl font-bold text-xs ring-4 ring-white">Zalo</a>
-        <a href="https://m.me/ticoscoffee" target="_blank" class="w-14 h-14 bg-[#0084FF] rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-4 ring-white"><i class="fa-brands fa-facebook-messenger"></i></a>
-        <a href="https://www.facebook.com/ticoscoffee/" target="_blank" class="w-14 h-14 bg-[#1877F2] rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-4 ring-white"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="https://www.tiktok.com/@ticoscoffeeofficial" target="_blank" class="w-14 h-14 bg-black rounded-full flex items-center justify-center text-white text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-4 ring-white"><i class="fa-brands fa-tiktok"></i></a>
+    <div class="fixed bottom-6 right-4 md:right-8 z-[100] flex flex-col gap-3 items-center">
+        <a href="decor/mã zalo.jpg" data-fancybox="qr" class="w-12 h-12 md:w-14 md:h-14 bg-[#0068FF] rounded-full flex items-center justify-center text-white hover:scale-110 hover:-translate-y-2 transition-all shadow-xl font-bold text-[10px] md:text-xs ring-2 ring-white">Zalo</a>
+        <a href="https://m.me/ticoscoffee" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-[#0084FF] rounded-full flex items-center justify-center text-white text-xl md:text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-2 ring-white"><i class="fa-brands fa-facebook-messenger"></i></a>
+        <a href="https://www.facebook.com/ticoscoffee/" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-[#1877F2] rounded-full flex items-center justify-center text-white text-xl md:text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-2 ring-white"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/ticoszonecoffeetea/" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] rounded-full flex items-center justify-center text-white text-xl md:text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-2 ring-white"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@ticoscoffeeofficial" target="_blank" class="w-12 h-12 md:w-14 md:h-14 bg-black rounded-full flex items-center justify-center text-white text-xl md:text-2xl hover:scale-110 hover:-translate-y-2 transition-all shadow-xl ring-2 ring-white border border-gray-700"><i class="fa-brands fa-tiktok"></i></a>
     </div>
 
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200 transition-all duration-300 shadow-sm" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 md:h-24 flex items-center justify-between">
             <a href="#" class="flex items-center gap-3">
-                <img src="decor/logo.png" alt="Ticos Logo" class="h-16 lg:h-20 drop-shadow-md hover:scale-105 transition-transform" onerror="this.style.display='none'">
+                <img src="decor/logo.png" alt="Ticos Logo" class="h-12 md:h-16 object-contain drop-shadow-md hover:scale-105 transition-transform" onerror="this.style.display='none'">
                 <div class="flex flex-col">
-                    <span class="text-3xl font-heading font-black tracking-tight text-gray-900 leading-none">TICOS<span class="text-ticos-primary">.</span></span>
-                    <span class="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Coffee & Tea</span>
+                    <span class="text-2xl md:text-3xl font-heading font-black tracking-tight text-gray-900 leading-none">TICOS<span class="text-ticos-primary">.</span></span>
+                    <span class="text-[8px] md:text-[10px] font-bold text-gray-500 tracking-widest uppercase">Coffee & Workspace</span>
                 </div>
             </a>
-            <div class="hidden md:flex space-x-12 font-heading font-bold text-base tracking-widest uppercase">
+            <div class="hidden lg:flex space-x-10 font-heading font-bold text-sm tracking-widest uppercase">
                 <a href="#about" class="text-gray-700 hover:text-ticos-primary transition duration-300">Không Gian</a>
                 <a href="#menu" class="text-gray-700 hover:text-ticos-primary transition duration-300">Thực Đơn</a>
                 <a href="#programs" class="text-gray-700 hover:text-ticos-primary transition duration-300">Ưu Đãi</a>
                 <a href="#map" class="text-gray-700 hover:text-ticos-primary transition duration-300">Bản Đồ</a>
             </div>
-            <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white font-heading font-black px-8 py-4 rounded-xl text-base tracking-wider uppercase flex items-center gap-2">
-                <i class="fa-solid fa-motorcycle text-xl"></i> ĐẶT GIAO NGAY
+            <button onclick="openOrderModal(event)" class="btn-red text-white font-heading font-black px-4 py-2 md:px-6 md:py-3 rounded-lg text-xs md:text-sm tracking-wider uppercase flex items-center gap-2">
+                <i class="fa-solid fa-motorcycle md:text-lg"></i> <span class="hidden md:inline">ĐẶT GIAO NGAY</span><span class="md:hidden">ĐẶT HÀNG</span>
             </button>
         </div>
     </nav>
 
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-50 pt-24">
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-50 pt-20">
         <div class="absolute inset-0 z-0">
             <img src="decor/inside.jpg" class="w-full h-full object-cover opacity-20 scale-105 transform origin-center animate-[pulse_10s_ease-in-out_infinite]" id="hero-bg" onerror="this.src='https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2000'">
-            <div class="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-gray-50"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-white/90 via-white/70 to-gray-50"></div>
         </div>
         
         <div class="text-center px-4 z-10 max-w-6xl mt-10 relative">
-            <div class="inline-block px-6 py-2 border-2 border-ticos-primary/30 rounded-full mb-8 bg-white/50 backdrop-blur-sm gs-fade-down shadow-lg">
-                <span class="font-heading font-black text-ticos-primary text-sm md:text-base tracking-[0.3em] uppercase">Hệ Thống Cà Phê 24/7</span>
+            <div class="inline-block px-6 py-2 border-2 border-ticos-primary/30 rounded-full mb-6 bg-white/60 backdrop-blur-sm gs-fade-down shadow-md">
+                <span class="font-heading font-black text-ticos-primary text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase">Hệ Thống Cà Phê Mở Cửa 24/7</span>
             </div>
-            <h1 class="font-heading text-7xl md:text-[9rem] lg:text-[12rem] font-black text-gray-900 uppercase leading-[0.8] tracking-tighter drop-shadow-sm gs-fade-up">TICOS</h1>
-            <h1 class="font-heading text-6xl md:text-[6rem] lg:text-[8rem] font-black text-transparent uppercase mt-4 mb-10 gs-fade-up" style="-webkit-text-stroke: 3px #B21F36; text-shadow: 4px 4px 0px rgba(178,31,54,0.1);" style="transition-delay: 100ms;">WORKSPACE</h1>
             
-            <p class="font-body text-gray-600 font-medium text-xl md:text-2xl max-w-3xl mx-auto mb-14 gs-fade-up leading-relaxed" style="transition-delay: 200ms;">Thiết kế Industrial cực chất. 100% bàn rộng rãi trang bị ổ cắm. Trạm sạc năng lượng hoàn hảo cho những đêm dài chạy deadline cùng Sài Gòn.</p>
+            <h1 class="font-heading text-6xl md:text-8xl lg:text-[10rem] font-black text-gray-900 uppercase leading-[0.9] tracking-tighter drop-shadow-sm gs-fade-up">TICOS</h1>
+            <h1 class="font-heading text-5xl md:text-7xl lg:text-[7rem] font-black text-transparent uppercase mt-2 mb-8 gs-fade-up" style="-webkit-text-stroke: 2px #B21F36; text-shadow: 3px 3px 0px rgba(178,31,54,0.15);" style="transition-delay: 100ms;">WORKSPACE</h1>
             
-            <div class="flex flex-col sm:flex-row justify-center gap-6 gs-fade-up" style="transition-delay: 300ms;">
-                <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white px-14 py-6 rounded-2xl font-heading font-black text-xl uppercase tracking-widest">
-                    ĐẶT NƯỚC TẬN BÀN <i class="fa-solid fa-arrow-right ml-2"></i>
+            <p class="font-body text-gray-600 font-medium text-base md:text-xl max-w-3xl mx-auto mb-10 gs-fade-up leading-relaxed px-4" style="transition-delay: 200ms;">Thiết kế Industrial cực chất. 100% bàn trang bị ổ cắm điện. Trạm sạc năng lượng hoàn hảo cho những đêm dài chạy deadline cùng Sài Gòn.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 px-6 gs-fade-up" style="transition-delay: 300ms;">
+                <button onclick="openOrderModal(event)" class="btn-red text-white px-8 py-4 md:px-12 md:py-5 rounded-2xl font-heading font-black text-lg md:text-xl uppercase tracking-widest w-full sm:w-auto">
+                    GIAO HÀNG TẬN NƠI <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
-                <a href="#menu" class="px-14 py-6 rounded-2xl border-4 border-gray-900 font-heading font-black text-xl text-gray-900 uppercase tracking-widest hover:bg-gray-900 hover:text-white transition-all shadow-xl">
+                <a href="#menu" class="px-8 py-4 md:px-12 md:py-5 rounded-2xl border-4 border-gray-900 font-heading font-black text-lg md:text-xl text-gray-900 uppercase tracking-widest hover:bg-gray-900 hover:text-white transition-all shadow-xl w-full sm:w-auto">
                     KHÁM PHÁ MENU
                 </a>
             </div>
         </div>
     </section>
 
-    <div class="bg-ticos-primary py-6 marquee border-y-4 border-red-900/30 shadow-[0_20px_50px_rgba(178,31,54,0.3)] relative z-20 transform -rotate-1 scale-105">
-        <div class="marquee-content font-heading text-3xl md:text-5xl text-white font-black tracking-[0.2em] uppercase">
+    <div class="bg-ticos-primary py-4 md:py-6 marquee border-y-4 border-red-900/30 shadow-xl relative z-20 transform -rotate-1 scale-105">
+        <div class="marquee-content font-heading text-2xl md:text-4xl text-white font-black tracking-[0.2em] uppercase">
             OPEN 24/7 ✦ WIFI TỐC ĐỘ CAO ✦ HÀNG NGÀN Ổ CẮM ✦ GIAO HÀNG TẬN NƠI ✦ OPEN 24/7 ✦ 
         </div>
     </div>
 
-    <section id="about" class="py-32 px-6 bg-white relative">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section id="about" class="py-20 md:py-32 px-6 bg-white relative">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div class="gs-fade-right">
-                <span class="text-gray-500 font-black tracking-[0.3em] uppercase text-sm mb-4 block">Góc Cảm Hứng</span>
-                <h2 class="font-heading text-6xl md:text-8xl font-black mb-10 leading-tight uppercase text-gray-900">TRẠM SẠC <br><span class="text-ticos-primary title-decor">DÂN CÀY</span></h2>
+                <span class="text-gray-500 font-black tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block">Góc Cảm Hứng</span>
+                <h2 class="font-heading text-5xl md:text-7xl font-black mb-8 leading-tight uppercase text-gray-900">TRẠM SẠC <br><span class="text-ticos-primary title-decor">DÂN CÀY</span></h2>
                 
-                <p class="text-gray-600 text-xl font-medium leading-relaxed border-l-4 border-ticos-primary pl-8 mb-12">Phong cách Industrial mạnh mẽ, kết hợp mảng tường gạch thô và nội thất gỗ ấm. Ánh sáng được đo đạc cẩn thận giúp bạn tập trung tuyệt đối mà không hề mỏi mắt.</p>
+                <p class="text-gray-600 text-lg md:text-xl font-medium leading-relaxed border-l-4 border-ticos-primary pl-6 mb-10">Phong cách Industrial mạnh mẽ, kết hợp mảng tường gạch thô và nội thất gỗ ấm. Ánh sáng được bố trí cẩn thận giúp bạn tập trung làm việc mà không hề mỏi mắt.</p>
 
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="bg-gray-50 p-8 rounded-[2rem] border border-gray-200 shadow-lg hover:-translate-y-2 transition-transform">
-                        <i class="fa-regular fa-clock text-5xl text-ticos-primary mb-6 floating"></i>
-                        <h4 class="font-heading font-black text-2xl text-gray-900 mb-3">MỞ CỬA 24/7</h4>
-                        <p class="text-base text-gray-600 font-medium">Luôn sáng đèn đón chờ những cú đêm chạy deadline không ngừng nghỉ.</p>
+                <div class="grid grid-cols-2 gap-4 md:gap-8">
+                    <div class="bg-gray-50 p-6 md:p-8 rounded-[2rem] border border-gray-200 shadow-lg hover:-translate-y-2 transition-transform">
+                        <i class="fa-regular fa-clock text-4xl md:text-5xl text-ticos-primary mb-4 floating"></i>
+                        <h4 class="font-heading font-black text-xl md:text-2xl text-gray-900 mb-2">MỞ CỬA 24/7</h4>
+                        <p class="text-sm md:text-base text-gray-600 font-medium leading-snug">Sáng đèn đón chờ những cú đêm chạy deadline.</p>
                     </div>
-                    <div class="bg-gray-50 p-8 rounded-[2rem] border border-gray-200 shadow-lg hover:-translate-y-2 transition-transform">
-                        <i class="fa-solid fa-plug text-5xl text-ticos-primary mb-6 floating" style="animation-delay: 1s;"></i>
-                        <h4 class="font-heading font-black text-2xl text-gray-900 mb-3">100% CÓ SẠC</h4>
-                        <p class="text-base text-gray-600 font-medium">Bố trí ổ cắm tận bàn, wifi mạnh mẽ, không lo sập nguồn thiết bị.</p>
+                    <div class="bg-gray-50 p-6 md:p-8 rounded-[2rem] border border-gray-200 shadow-lg hover:-translate-y-2 transition-transform">
+                        <i class="fa-solid fa-plug text-4xl md:text-5xl text-ticos-primary mb-4 floating" style="animation-delay: 1s;"></i>
+                        <h4 class="font-heading font-black text-xl md:text-2xl text-gray-900 mb-2">100% CÓ SẠC</h4>
+                        <p class="text-sm md:text-base text-gray-600 font-medium leading-snug">Ổ cắm tận bàn, không lo sập nguồn thiết bị.</p>
                     </div>
                 </div>
             </div>
             
-            <div class="gs-fade-left grid grid-cols-2 gap-6 h-[700px]">
-                <img src="decor/4.jpg" class="rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600'">
-                <div class="grid grid-rows-2 gap-6">
-                    <img src="decor/1.jpg" class="rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=600'">
-                    <img src="decor/5.jpg" class="rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=600'">
+            <div class="gs-fade-left grid grid-cols-2 gap-4 md:gap-6 h-[400px] md:h-[600px] lg:h-[700px]">
+                <img src="decor/4.jpg" class="rounded-3xl md:rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600'">
+                <div class="grid grid-rows-2 gap-4 md:gap-6">
+                    <img src="decor/1.jpg" class="rounded-3xl md:rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=600'">
+                    <img src="decor/5.jpg" class="rounded-3xl md:rounded-[2.5rem] w-full h-full object-cover shadow-2xl hover:scale-[1.02] transition duration-500 border-4 border-white" onerror="this.src='https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=600'">
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="menu" class="py-32 bg-gray-50 relative border-t border-gray-200">
-        <div class="max-w-[1400px] mx-auto px-6">
-            <div class="text-center mb-20 gs-fade-down">
-                <span class="text-gray-500 font-black tracking-[0.4em] text-base uppercase block mb-4">Nạp Năng Lượng</span>
-                <h2 class="font-heading text-6xl md:text-8xl font-black text-gray-900 uppercase">MENU <span class="text-ticos-primary title-decor is-visible">TICOS</span></h2>
+    <section id="menu" class="py-20 md:py-32 bg-gray-50 relative border-t border-gray-200">
+        <div class="max-w-[1400px] mx-auto px-4 md:px-6">
+            <div class="text-center mb-16 gs-fade-down">
+                <span class="text-gray-500 font-black tracking-[0.4em] text-sm uppercase block mb-4">Nạp Năng Lượng</span>
+                <h2 class="font-heading text-5xl md:text-7xl font-black text-gray-900 uppercase"><span class="title-decor is-visible">MENU</span> TICOS</h2>
             </div>
 
-            <div class="flex overflow-x-auto gap-4 pb-6 mb-16 no-scrollbar gs-fade-up sticky top-24 z-20 bg-gray-50/90 backdrop-blur-xl py-4 justify-start lg:justify-center">
-                <button onclick="filterMenu('all', this)" class="active-tab flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">TẤT CẢ</button>
-                <button onclick="filterMenu('caphe', this)" class="flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">CÀ PHÊ</button>
-                <button onclick="filterMenu('matcha', this)" class="flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">MATCHA</button>
-                <button onclick="filterMenu('trasua', this)" class="flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">TRÀ SỮA</button>
-                <button onclick="filterMenu('tra', this)" class="flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">TRÀ TRÁI CÂY</button>
-                <button onclick="filterMenu('banh', this)" class="flex-none px-10 py-5 rounded-2xl bg-white text-gray-500 border-2 border-gray-200 font-heading font-black text-lg tracking-widest uppercase transition-all shadow-md hover:bg-gray-100 hover:text-gray-900">BÁNH & ĂN VẶT</button>
+            <div class="flex overflow-x-auto snap-x gap-3 pb-6 mb-12 no-scrollbar gs-fade-up sticky top-[72px] md:top-24 z-20 bg-gray-50/95 backdrop-blur-md py-4 justify-start xl:justify-center">
+                <button onclick="filterMenu('all', this)" class="snap-start active-tab flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">TẤT CẢ</button>
+                <button onclick="filterMenu('caphe', this)" class="snap-start flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">CÀ PHÊ</button>
+                <button onclick="filterMenu('matcha', this)" class="snap-start flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">MATCHA</button>
+                <button onclick="filterMenu('trasua', this)" class="snap-start flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">TRÀ SỮA</button>
+                <button onclick="filterMenu('tra', this)" class="snap-start flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">TRÀ TRÁI CÂY</button>
+                <button onclick="filterMenu('banh', this)" class="snap-start flex-none px-6 py-3 md:px-10 md:py-4 rounded-xl md:rounded-2xl bg-white text-gray-600 border border-gray-200 font-heading font-black text-sm md:text-lg tracking-widest uppercase transition-all shadow-sm hover:bg-gray-100 hover:text-gray-900 whitespace-nowrap">BÁNH & ĂN VẶT</button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 min-h-[800px]">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 min-h-[600px]">
                 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê đen.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê đen.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cà Phê Đen</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">36K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cà Phê Đen</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">36K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê sữa.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê sữa.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cà Phê Sữa</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">39K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cà Phê Sữa</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">39K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-sm px-5 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg transform rotate-3">HOT</div>
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/bạc xỉu.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md transform rotate-3">HOT</div>
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/bạc xỉu.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Bạc Xỉu</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bạc Xỉu</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 font-heading font-black text-sm px-5 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg transform -rotate-3">BEST</div>
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê sữa kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md transform -rotate-3">BEST</div>
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê sữa kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Sữa Kem Muối</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Sữa Kem Muối</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê đen kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê đen kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Đen Kem Muối</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">45K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Đen Kem Muối</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">45K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/americano.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/americano.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Americano</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">45K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Americano</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">45K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/latte.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/latte.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Latte</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Latte</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê chocolate.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê chocolate.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cà Phê Chocolate</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cà Phê Chocolate</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê latte chuối.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê latte chuối.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Latte Chuối</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Latte Chuối</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê hạnh nhân.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê hạnh nhân.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cà Phê Hạnh Nhân</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cà Phê Hạnh Nhân</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cà phê hạnh nhân kem phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cà phê hạnh nhân kem phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Hạnh Nhân Phô Mai</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Hạnh Nhân Phô Mai</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cacao classic (hot).webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cacao classic (hot).webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cacao Classic</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cacao Nóng/Đá</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/cacao hạnh nhân.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/cacao hạnh nhân.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Cacao Hạnh Nhân</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Cacao Hạnh Nhân</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item caphe bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative">
-                    <div class="aspect-square bg-gray-100 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden">
-                        <img src="menu/bơ ca cao kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
+                <div class="menu-item caphe bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative">
+                    <div class="aspect-square bg-gray-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/bơ ca cao kem muối.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Bơ Cacao Muối</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bơ Cacao Muối</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-                <div class="menu-item matcha bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-green-50 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-green-100">
-                        <img src="menu/matcha latte kem mây bồng bềnh.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                <div class="menu-item matcha bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md">HOT</div>
+                    <div class="aspect-square bg-green-50/50 border border-green-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/matcha latte kem mây bồng bềnh.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Matcha Kem Mây</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">64K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Matcha Kem Mây</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">64K</span>
                     </div>
                 </div>
 
-                <div class="menu-item matcha bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-green-50 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-green-100">
-                        <img src="menu/matcha latte đậm chất.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                <div class="menu-item matcha bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-green-50/50 border border-green-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/matcha latte đậm chất.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Matcha Đậm Chất</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">54K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Matcha Đậm Chất</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">54K</span>
                     </div>
                 </div>
 
-                <div class="menu-item matcha bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-green-50 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-green-100">
-                        <img src="menu/matcha latte dịu nhẹ.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                <div class="menu-item matcha bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-green-50/50 border border-green-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/matcha latte dịu nhẹ.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Matcha Dịu Nhẹ</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">54K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Matcha Dịu Nhẹ</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">54K</span>
                     </div>
                 </div>
 
-                <div class="menu-item matcha bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-green-50 rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-green-100">
-                        <img src="menu/matcha latte caramel.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                <div class="menu-item matcha bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-green-50/50 border border-green-100 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/matcha latte caramel.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Matcha Caramel</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">64K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Matcha Caramel</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">64K</span>
                     </div>
                 </div>
 
-                <div class="menu-item trasua bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 font-heading font-black text-sm px-5 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg">BEST</div>
-                    <div class="aspect-square bg-[#fcf9f2] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-100">
-                        <img src="menu/trà sữa nguyên lá.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md">BEST</div>
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/trà sữa nguyên lá.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Sữa Nguyên Lá</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Sữa Nguyên Lá</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item trasua bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fcf9f2] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-100">
-                        <img src="menu/olong sữa ba lá.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/olong sữa ba lá.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Olong Sữa Ba Lá</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item trasua bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fcf9f2] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-100">
-                        <img src="menu/trà sữa đường nâu.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Sữa Đường Nâu</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">49K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item trasua bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fcf9f2] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-100">
-                        <img src="menu/trà sữa latte bơ.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Sữa Latte Bơ</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">56K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item trasua bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fcf9f2] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-100">
-                        <img src="menu/trà sữa nguyên lá kem phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Nguyên Lá Phô Mai</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item tra bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-sm px-5 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg">HOT</div>
-                    <div class="aspect-square bg-[#fff8f5] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-red-50">
-                        <img src="menu/trà vải hoa hồng.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Vải Hoa Hồng</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item tra bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fff8f5] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-red-50">
-                        <img src="menu/trà đào hồng chanh dây.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Đào Chanh Dây</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item tra bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fff8f5] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-red-50">
-                        <img src="menu/trà dâu rừng nhiệt đới.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Dâu Rừng Nhiệt Đới</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">57K</span>
-                    </div>
-                </div>
-
-                <div class="menu-item tra bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fff8f5] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-red-50">
-                        <img src="menu/trà khế hoa nhãn.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
-                    </div>
-                    <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Trà Khế Hoa Nhãn</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">59K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Olong Sữa Ba Lá</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
                 
-                <div class="menu-item tra bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fff8f5] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-red-50">
-                        <img src="menu/zona gialla.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/trà sữa đường nâu.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Ép Zona Gialla</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">68K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Sữa Đường Nâu</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">49K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/Bánh mì chà bông phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md">NEW</div>
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/trà sữa latte bơ.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Bánh Mì Chà Bông</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">39K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Sữa Latte Bơ</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">56K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/croissant chocolate.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/trà sữa chocolate chuối.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Croissant Socola</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">39K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">TS Choco Chuối</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">56K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/bánh khoai lang mochi.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item trasua bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-[#fffcf5] border border-orange-50 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden">
+                        <img src="menu/trà sữa nguyên lá kem phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Khoai Lang Mochi</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">35K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Nguyên Lá Phô Mai</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/tiramisu.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="absolute top-4 right-4 bg-ticos-primary text-white font-heading font-black text-xs px-4 py-1.5 rounded-xl uppercase tracking-widest z-10 shadow-md">HOT</div>
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà vải hoa hồng.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">Bánh Tiramisu</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">45K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Vải Hoa Hồng</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/bánh tráng dẻo mỡ hành tóp mỡ.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà đào hồng chanh dây.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">BT Dẻo Mỡ Hành</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">29K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Đào Hồng Chanh Dây</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/bánh tráng cuộn bò.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà dâu rừng nhiệt đới.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">BT Cuộn Bò</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">39K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Dâu Rừng Nhiệt Đới</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">57K</span>
                     </div>
                 </div>
 
-                <div class="menu-item banh bg-white rounded-[2.5rem] p-8 shadow-xl hover:shadow-2xl menu-card gs-fade-up relative hidden">
-                    <div class="aspect-square bg-[#fffaf0] rounded-[2rem] p-4 mb-8 flex items-center justify-center overflow-hidden border border-orange-50">
-                        <img src="menu/bánh tráng thập cẩm siêu vị.webp" class="menu-img w-full h-full object-contain drop-shadow-xl" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà lài đác thơm.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
                     </div>
                     <div class="text-center">
-                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-3">BT Thập Cẩm</h3>
-                        <span class="text-4xl font-heading font-black text-ticos-primary block">39K</span>
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Lài Đác Thơm</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
                     </div>
                 </div>
 
-            </div>
-            
-            <div class="text-center mt-24 gs-fade-up">
-                <button class="font-heading text-2xl font-black text-gray-400 hover:text-ticos-primary uppercase tracking-widest border-b-4 border-gray-300 hover:border-ticos-primary pb-2 transition-all">XEM TẤT CẢ DANH SÁCH</button>
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà khế hoa nhãn.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Trà Khế Hoa Nhãn</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
+                    </div>
+                </div>
+                
+                <div class="menu-item tra bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-red-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-red-50">
+                        <img src="menu/trà olong bưởi mật ong chanh đào.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Olong Bưởi Mật Ong</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">59K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/Bánh mì chà bông phô mai.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bánh Mì Chà Bông</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">39K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/croissant chocolate.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Croissant Chocolate</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">39K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/bánh khoai lang mochi.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Khoai Lang Mochi</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">35K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/tiramisu.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bánh Tiramisu</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">45K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/bánh tráng dẻo mỡ hành tóp mỡ.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bánh Tráng Mỡ Hành</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">29K</span>
+                    </div>
+                </div>
+
+                <div class="menu-item banh bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-2xl menu-card gs-fade-up relative hidden">
+                    <div class="aspect-square bg-orange-50/30 rounded-3xl p-4 mb-6 flex items-center justify-center overflow-hidden border border-orange-50">
+                        <img src="menu/bánh tráng cuộn bò.webp" class="menu-img w-full h-full object-contain drop-shadow-md" onerror="this.src='https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=600'">
+                    </div>
+                    <div class="text-center">
+                        <h3 class="font-heading text-2xl font-black text-gray-900 uppercase tracking-wide mb-2">Bánh Tráng Cuộn Bò</h3>
+                        <span class="text-3xl font-heading font-black text-ticos-primary block">39K</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <section id="programs" class="py-32 bg-[#111111] relative overflow-hidden text-white">
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
-        
+    <section id="programs" class="py-32 bg-gray-900 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="text-center mb-24 gs-fade-up">
-                <span class="text-gray-400 font-black tracking-[0.4em] text-sm uppercase block mb-4">Đừng Bỏ Lỡ</span>
-                <h2 class="font-heading text-6xl md:text-8xl font-black uppercase text-white"><span class="title-decor is-visible">ƯU ĐÃI</span> ĐẶC QUYỀN</h2>
+            <div class="text-center mb-20 gs-fade-down">
+                <span class="text-ticos-primary font-black tracking-[0.4em] text-sm uppercase block mb-4">Đừng Bỏ Lỡ</span>
+                <h2 class="font-heading text-6xl md:text-8xl font-black text-white uppercase"><span class="title-decor is-visible">ƯU ĐÃI</span> ĐẶC QUYỀN</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-                
-                <div class="bg-[#1a1a1a] rounded-[3rem] overflow-hidden shadow-2xl gs-fade-up group hover:-translate-y-4 transition-transform duration-500 border border-white/10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="bg-white rounded-[3rem] overflow-hidden shadow-2xl gs-fade-up group hover:-translate-y-4 transition-transform duration-500">
                     <div class="relative overflow-hidden">
-                        <div class="absolute top-6 right-6 bg-ticos-primary text-white font-heading font-black text-sm px-6 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg flex items-center gap-2"><i class="fa-solid fa-fire animate-pulse"></i> HOT</div>
+                        <div class="absolute top-6 right-6 bg-ticos-primary text-white font-heading font-black text-sm px-6 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg flex items-center gap-2"><i class="fa-solid fa-fire animate-pulse"></i> ĐANG DIỄN RA</div>
                         <img src="decor/mua 3 tặng 1.jpg" class="w-full aspect-video object-cover group-hover:scale-110 transition duration-700 opacity-90 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800'">
                     </div>
-                    <div class="p-12">
-                        <div class="inline-block bg-white/10 text-gray-300 font-bold text-xs uppercase tracking-widest mb-6 px-5 py-2 rounded-xl border border-white/20"><i class="fa-regular fa-clock mr-2"></i> 14H - 17H Hàng Tuần</div>
-                        <h3 class="font-heading text-4xl font-black text-white uppercase mb-6 leading-snug">MUA 3 <span class="text-ticos-primary">TẶNG 1</span></h3>
-                        <p class="text-gray-400 text-lg mb-10 leading-relaxed font-medium">Tặng ngay 1 phần Bánh Tráng Trộn Tóp Mỡ Hành giòn rụm khi mua combo 3 ly Trà hoặc Matcha size L. Rủ ngay hội bạn chạy deadline cùng săn deal thôi!</p>
-                        <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white px-10 py-5 rounded-2xl font-heading font-black text-lg uppercase tracking-widest w-full">GỌI HỘI ĐẶT NGAY</button>
+                    <div class="p-12 text-center md:text-left">
+                        <div class="inline-block bg-red-50 text-ticos-primary font-bold text-xs uppercase tracking-widest mb-6 px-5 py-2 rounded-xl border border-red-100"><i class="fa-regular fa-clock mr-2"></i> 14H - 17H Hàng Tuần</div>
+                        <h3 class="font-heading text-4xl font-black text-gray-900 uppercase mb-6 leading-snug">MUA 3 <span class="text-ticos-primary">TẶNG 1</span></h3>
+                        <p class="text-gray-600 text-lg mb-10 leading-relaxed font-medium">Tặng ngay 1 phần Bánh Tráng Trộn Tóp Mỡ Hành giòn rụm khi mua combo 3 ly Trà hoặc Matcha size L. Rủ ngay hội bạn chạy deadline cùng săn deal thôi!</p>
+                        <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white px-10 py-5 rounded-2xl font-heading font-black text-lg uppercase tracking-widest w-full shadow-lg hover:shadow-xl">GỌI HỘI ĐẶT NGAY</button>
                     </div>
                 </div>
 
-                <div class="bg-[#1a1a1a] rounded-[3rem] overflow-hidden shadow-2xl gs-fade-up group hover:-translate-y-4 transition-transform duration-500 border border-white/10" style="transition-delay: 150ms;">
+                <div class="bg-white rounded-[3rem] overflow-hidden shadow-2xl gs-fade-up group hover:-translate-y-4 transition-transform duration-500" style="transition-delay: 150ms;">
                     <div class="relative overflow-hidden">
-                        <div class="absolute top-6 right-6 bg-white text-gray-900 font-heading font-black text-sm px-6 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg flex items-center gap-2"><i class="fa-solid fa-mug-hot"></i> SÁNG SỚM</div>
+                        <div class="absolute top-6 right-6 bg-gray-900 text-white font-heading font-black text-sm px-6 py-2 rounded-2xl uppercase tracking-widest z-10 shadow-lg flex items-center gap-2"><i class="fa-solid fa-mug-hot"></i> SÁNG SỚM</div>
                         <img src="decor/cà phê 29k.jpg" class="w-full aspect-video object-cover group-hover:scale-110 transition duration-700 opacity-90 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800'">
                     </div>
-                    <div class="p-12">
-                        <div class="inline-block bg-white/10 text-gray-300 font-bold text-xs uppercase tracking-widest mb-6 px-5 py-2 rounded-xl border border-white/20"><i class="fa-solid fa-location-dot mr-2"></i> Chi nhánh Bàu Cát</div>
-                        <h3 class="font-heading text-4xl font-black text-white uppercase mb-6 leading-snug">ĐỒNG GIÁ <span class="text-ticos-primary">29K</span></h3>
-                        <p class="text-gray-400 text-lg mb-10 leading-relaxed font-medium">Bừng tỉnh năng lượng ngày mới với Cà Phê Đen hoặc Cà Phê Sữa đậm đà chỉ 29K. Ưu đãi áp dụng trong khung giờ 06H - 11H (Từ T2 đến T5).</p>
-                        <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white px-10 py-5 rounded-2xl font-heading font-black text-lg uppercase tracking-widest w-full">ĐẶT CÀ PHÊ SÁNG</button>
+                    <div class="p-12 text-center md:text-left">
+                        <div class="inline-block bg-gray-100 text-gray-700 font-bold text-xs uppercase tracking-widest mb-6 px-5 py-2 rounded-xl border border-gray-200"><i class="fa-solid fa-location-dot mr-2"></i> Chi nhánh Bàu Cát</div>
+                        <h3 class="font-heading text-4xl font-black text-gray-900 uppercase mb-6 leading-snug">ĐỒNG GIÁ <span class="text-ticos-primary">29K</span></h3>
+                        <p class="text-gray-600 text-lg mb-10 leading-relaxed font-medium">Bừng tỉnh năng lượng ngày mới với Cà Phê Đen hoặc Cà Phê Sữa đậm đà chỉ 29K. Ưu đãi áp dụng trong khung giờ 06H - 11H (Từ T2 đến T5).</p>
+                        <button onclick="document.getElementById('orderModal').classList.remove('hidden')" class="btn-red text-white px-10 py-5 rounded-2xl font-heading font-black text-lg uppercase tracking-widest w-full shadow-lg hover:shadow-xl">SĂN DEAL LIỀN</button>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <section id="map" class="py-32 bg-gray-50 border-t border-gray-200">
+    <section id="map" class="py-32 bg-white border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-6 gs-fade-up">
-            <h2 class="font-heading text-6xl md:text-8xl font-black uppercase text-gray-900 text-center mb-20"><span class="title-decor is-visible">TÌM</span> CHI NHÁNH</h2>
+            <h2 class="font-heading text-5xl md:text-7xl font-black uppercase text-gray-900 text-center mb-20"><span class="title-decor is-visible">TÌM</span> CHI NHÁNH</h2>
             
             <div class="flex flex-col lg:flex-row gap-10 items-stretch">
-                <div class="lg:w-1/3 bg-white p-10 rounded-[3rem] shadow-2xl flex flex-col justify-center border border-gray-100">
-                    <div id="btnPVT" onclick="changeMap('pvt')" class="p-8 rounded-[2rem] border-2 border-ticos-primary bg-red-50 cursor-pointer transition-all active-tab group mb-6">
+                <div class="lg:w-1/3 bg-gray-50 p-10 rounded-[3rem] shadow-lg flex flex-col justify-center border border-gray-200">
+                    <div id="btnPVT" onclick="changeMap('pvt')" class="p-8 rounded-[2rem] border-2 border-ticos-primary bg-red-50 cursor-pointer transition-all active-tab group mb-6 shadow-md hover:-translate-y-1">
                         <h4 class="font-heading font-black uppercase text-2xl mb-2 flex items-center gap-3 text-gray-900"><i class="fa-solid fa-location-dot text-ticos-primary"></i> Phan Văn Trị</h4>
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-widest ml-8">527 Phan Văn Trị, Gò Vấp</p>
+                        <p class="text-sm md:text-base text-gray-600 font-bold uppercase tracking-widest ml-8">527 Phan Văn Trị, Gò Vấp</p>
                         <span class="inline-block mt-5 ml-8 text-xs font-black bg-ticos-primary text-white px-4 py-2 rounded-xl uppercase tracking-widest shadow-md">Mở Cửa 24/7</span>
                     </div>
                     
-                    <div id="btnBauCat" onclick="changeMap('baucat')" class="p-8 rounded-[2rem] border-2 border-transparent hover:border-gray-200 bg-white cursor-pointer transition-all group">
+                    <div id="btnBauCat" onclick="changeMap('baucat')" class="p-8 rounded-[2rem] border-2 border-transparent hover:border-gray-300 bg-white cursor-pointer transition-all group shadow-sm hover:-translate-y-1">
                         <h4 class="font-heading font-black uppercase text-2xl mb-2 flex items-center gap-3 text-gray-900"><i class="fa-solid fa-location-dot text-gray-400 group-hover:text-ticos-primary transition"></i> Bàu Cát</h4>
-                        <p class="text-sm text-gray-500 font-bold uppercase tracking-widest ml-8">145 Bàu Cát, Tân Bình</p>
+                        <p class="text-sm md:text-base text-gray-500 font-bold uppercase tracking-widest ml-8">145 Bàu Cát, Tân Bình</p>
                         <span class="inline-block mt-5 ml-8 text-xs font-black bg-gray-200 text-gray-600 px-4 py-2 rounded-xl uppercase tracking-widest">07:00 AM - 02:00 AM</span>
                     </div>
                 </div>
                 
-                <div class="lg:w-2/3 h-[600px] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white bg-gray-200 relative">
-                    <div id="mapLoader" class="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 transition-opacity duration-500 opacity-0 pointer-events-none">
+                <div class="lg:w-2/3 h-[500px] md:h-[600px] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-gray-100 bg-gray-200 relative">
+                    <div id="mapLoader" class="absolute inset-0 flex items-center justify-center bg-gray-50 z-10 transition-opacity duration-500 opacity-0 pointer-events-none">
                         <i class="fa-solid fa-location-crosshairs fa-spin text-5xl text-ticos-primary"></i>
                     </div>
                     <iframe id="map-iframe" class="w-full h-full" src="https://www.google.com/maps?q=10.825619,106.687595&hl=es;z=16&output=embed" allowfullscreen="" loading="lazy"></iframe>
@@ -651,7 +662,7 @@
         </div>
     </section>
 
-    <footer class="bg-[#111111] pt-24 pb-12 border-t-8 border-ticos-primary">
+    <footer class="bg-gray-900 pt-24 pb-12 border-t-8 border-ticos-primary">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
             <div class="col-span-1 flex flex-col items-center md:items-start">
                 <img src="decor/logo.png" class="h-20 mb-8 filter brightness-0 invert" onerror="this.style.display='none'">
@@ -659,31 +670,31 @@
             </div>
             
             <div>
-                <h4 class="text-white font-heading font-black text-lg mb-8 uppercase tracking-[0.3em]">Hệ Thống</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-body font-medium tracking-wide">
+                <h4 class="text-white font-heading font-black text-xl mb-8 uppercase tracking-[0.2em]">Hệ Thống</h4>
+                <p class="text-gray-400 text-base leading-relaxed font-body font-medium tracking-wide">
                     <span class="text-white font-bold block mb-1">CN1 (24/7):</span> 527 Phan Văn Trị, Gò Vấp <br>
                     <span class="text-white font-bold block mt-4 mb-1">CN2 (07h-02h):</span> 145 Bàu Cát, Tân Bình
                 </p>
             </div>
             
             <div>
-                <h4 class="text-white font-heading font-black text-lg mb-8 uppercase tracking-[0.3em]">Liên Hệ</h4>
-                <p class="text-gray-400 text-sm leading-relaxed font-body font-medium tracking-wide">
+                <h4 class="text-white font-heading font-black text-xl mb-8 uppercase tracking-[0.2em]">Liên Hệ</h4>
+                <p class="text-gray-400 text-base leading-relaxed font-body font-medium tracking-wide">
                     <span class="text-white font-bold block mb-1">Hotline:</span> 1900 1234 <br>
                     <span class="text-white font-bold block mt-4 mb-1">Email:</span> contact@ticos.vn
                 </p>
             </div>
             
             <div>
-                <h4 class="text-white font-heading font-black text-lg mb-8 uppercase tracking-[0.3em]">Kết Nối</h4>
+                <h4 class="text-white font-heading font-black text-xl mb-8 uppercase tracking-[0.2em]">Kết Nối</h4>
                 <div class="flex justify-center md:justify-start gap-4">
-                    <a href="https://www.facebook.com/ticoscoffee/" target="_blank" class="w-14 h-14 rounded-2xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center text-white hover:border-ticos-primary hover:bg-ticos-primary transition-all text-xl shadow-lg"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="decor/mã zalo.jpg" data-fancybox="qr-footer" class="w-14 h-14 rounded-2xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center text-white hover:border-ticos-primary hover:bg-ticos-primary transition-all text-xl shadow-lg font-bold text-xs">Z</a>
-                    <a href="https://www.tiktok.com/@ticoscoffeeofficial" target="_blank" class="w-14 h-14 rounded-2xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center text-white hover:border-ticos-primary hover:bg-ticos-primary transition-all text-xl shadow-lg"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.facebook.com/ticoscoffee/" target="_blank" class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-white hover:bg-ticos-primary transition-all text-2xl shadow-lg hover:-translate-y-1"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="decor/mã zalo.jpg" data-fancybox="qr-footer" class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-white hover:bg-ticos-primary transition-all text-xl shadow-lg hover:-translate-y-1 font-bold text-sm">Zalo</a>
+                    <a href="https://www.instagram.com/ticoszonecoffeetea/" target="_blank" class="w-14 h-14 rounded-2xl bg-gray-800 flex items-center justify-center text-white hover:bg-ticos-primary transition-all text-2xl shadow-lg hover:-translate-y-1"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
         </div>
-        <div class="text-center text-gray-600 text-[10px] font-black uppercase tracking-[0.8em] pt-12 border-t border-white/10">© 2026 TICOS COFFEE ZONE. ALL RIGHTS RESERVED.</div>
+        <div class="text-center text-gray-500 text-[10px] md:text-xs font-black uppercase tracking-[0.5em] md:tracking-[0.8em] pt-12 border-t border-gray-800">© 2026 TICOS COFFEE ZONE. ALL RIGHTS RESERVED.</div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -691,9 +702,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
     
     <script>
-        // LOGIC LỌC TABS MENU MƯỢT MÀ
+        // LOGIC LỌC TABS MENU
         function filterMenu(type, btn) {
-            // Hiệu ứng Tab
             document.querySelectorAll('#menu button.flex-none').forEach(b => {
                 b.classList.remove('active-tab', 'bg-ticos-primary', 'text-white');
                 b.classList.add('bg-white', 'text-gray-500');
@@ -701,13 +711,12 @@
             btn.classList.remove('bg-white', 'text-gray-500');
             btn.classList.add('active-tab', 'bg-ticos-primary', 'text-white');
 
-            // Ẩn Hiện Card bằng GSAP
             const allItems = document.querySelectorAll('.menu-item');
             
             allItems.forEach(item => {
                 if(type === 'all' || item.classList.contains(type)) {
                     item.style.display = 'block';
-                    gsap.fromTo(item, { opacity: 0, scale: 0.8, y: 50 }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" });
+                    gsap.fromTo(item, { opacity: 0, scale: 0.9, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: "power2.out" });
                 } else {
                     item.style.display = 'none';
                 }
@@ -715,7 +724,7 @@
             ScrollTrigger.refresh();
         }
 
-        // LOGIC BẢN ĐỒ VÀ GHIM ĐỎ CHUẨN XÁC
+        // BẢN ĐỒ VÀ GHIM ĐỎ
         const branches = {
             pvt: { 
                 lat: 10.825619, lon: 106.687595, name: "Ticos Phan Văn Trị", 
@@ -744,28 +753,28 @@
             const btnB = document.getElementById('btnBauCat');
             
             if(key === 'pvt') {
-                btnP.classList.add('border-ticos-primary', 'bg-red-50');
+                btnP.classList.add('border-ticos-primary', 'bg-red-50', 'active-tab');
                 btnP.classList.remove('border-transparent', 'bg-white');
                 btnP.querySelector('span').classList.add('bg-ticos-primary', 'text-white', 'shadow-md');
                 btnP.querySelector('span').classList.remove('bg-gray-200', 'text-gray-600');
                 btnP.querySelector('i').classList.add('text-ticos-primary');
                 btnP.querySelector('i').classList.remove('text-gray-400');
                 
-                btnB.classList.remove('border-ticos-primary', 'bg-red-50');
+                btnB.classList.remove('border-ticos-primary', 'bg-red-50', 'active-tab');
                 btnB.classList.add('border-transparent', 'bg-white');
                 btnB.querySelector('span').classList.remove('bg-ticos-primary', 'text-white', 'shadow-md');
                 btnB.querySelector('span').classList.add('bg-gray-200', 'text-gray-600');
                 btnB.querySelector('i').classList.remove('text-ticos-primary');
                 btnB.querySelector('i').classList.add('text-gray-400');
             } else {
-                btnB.classList.add('border-ticos-primary', 'bg-red-50');
+                btnB.classList.add('border-ticos-primary', 'bg-red-50', 'active-tab');
                 btnB.classList.remove('border-transparent', 'bg-white');
                 btnB.querySelector('span').classList.add('bg-ticos-primary', 'text-white', 'shadow-md');
                 btnB.querySelector('span').classList.remove('bg-gray-200', 'text-gray-600');
                 btnB.querySelector('i').classList.add('text-ticos-primary');
                 btnB.querySelector('i').classList.remove('text-gray-400');
 
-                btnP.classList.remove('border-ticos-primary', 'bg-red-50');
+                btnP.classList.remove('border-ticos-primary', 'bg-red-50', 'active-tab');
                 btnP.classList.add('border-transparent', 'bg-white');
                 btnP.querySelector('span').classList.remove('bg-ticos-primary', 'text-white', 'shadow-md');
                 btnP.querySelector('span').classList.add('bg-gray-200', 'text-gray-600');
@@ -774,7 +783,6 @@
             }
         }
 
-        // KHOẢNG CÁCH CHO ĐẶT HÀNG
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -785,11 +793,19 @@
 
         const modal = document.getElementById('orderModal');
         const modalContent = document.getElementById('orderModalContent');
+        
         function closeOrderModal() { 
             modalContent.classList.remove('scale-100');
             modalContent.classList.add('scale-95');
             setTimeout(() => modal.classList.add('hidden'), 200);
         }
+
+        function updateLinks() {
+            const val = document.getElementById('branchSelector').value;
+            document.getElementById('shopeeLink').href = branches[val].shopee;
+            document.getElementById('grabLink').href = branches[val].grab;
+        }
+
         function openOrderModal(e) {
             e.preventDefault(); 
             modal.classList.remove('hidden');
@@ -798,6 +814,11 @@
                 modalContent.classList.add('scale-100');
             }, 10);
             
+            // Hiện loading, ẩn result & bảng chọn thủ công
+            document.getElementById('geoLoading').classList.remove('hidden');
+            document.getElementById('geoResult').classList.add('hidden');
+            document.getElementById('manualSelect').classList.add('hidden');
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     const lat = pos.coords.latitude, lon = pos.coords.longitude;
@@ -812,29 +833,38 @@
                     document.getElementById('shopeeLink').href = branches[nearest].shopee;
                     document.getElementById('grabLink').href = branches[nearest].grab;
                 }, () => {
+                    // Lỗi hoặc từ chối vị trí => Hiện bảng chọn thủ công
                     document.getElementById('geoLoading').classList.add('hidden');
-                    document.getElementById('geoResult').classList.remove('hidden');
-                    document.getElementById('nearestBranchName').innerText = "Ticos Phan Văn Trị";
-                    document.getElementById('distanceText').innerText = "(Chưa có định vị, gợi ý mặc định)";
-                    document.getElementById('shopeeLink').href = branches.pvt.shopee;
-                    document.getElementById('grabLink').href = branches.pvt.grab;
-                });
+                    document.getElementById('manualSelect').classList.remove('hidden');
+                    updateLinks(); // Set link mặc định theo thẻ select
+                }, { timeout: 5000 });
+            } else {
+                document.getElementById('geoLoading').classList.add('hidden');
+                document.getElementById('manualSelect').classList.remove('hidden');
+                updateLinks();
             }
         }
 
         Fancybox.bind('[data-fancybox]');
         
-        // KHỞI TẠO GSAP ANIMATIONS
+        // GSAP ANIMATIONS
         gsap.registerPlugin(ScrollTrigger);
         
-        // Header Anim
         gsap.from(".hero-text", { y: 150, opacity: 0, duration: 1.5, stagger: 0.2, ease: "power4.out" });
         gsap.to("#hero-bg", { y: "15%", ease: "none", scrollTrigger: { trigger: "section", start: "top top", scrub: true }});
         
-        // Scroll Anim
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-lg', 'py-2');
+            } else {
+                nav.classList.remove('shadow-lg', 'py-2');
+            }
+        });
+
         setTimeout(() => {
             gsap.utils.toArray('.gs-fade-up').forEach(elem => { 
-                gsap.from(elem, { y: 80, opacity: 0, duration: 1.2, ease: "back.out(1.5)", scrollTrigger: { trigger: elem, start: "top 85%" } }); 
+                gsap.from(elem, { y: 80, opacity: 0, duration: 1.2, ease: "back.out(1.2)", scrollTrigger: { trigger: elem, start: "top 85%" } }); 
             });
             gsap.utils.toArray('.gs-fade-left').forEach(elem => { 
                 gsap.from(elem, { x: 100, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: elem, start: "top 80%" } }); 
